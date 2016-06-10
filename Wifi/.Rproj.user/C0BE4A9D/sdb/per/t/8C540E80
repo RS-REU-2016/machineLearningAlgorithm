@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(XLConnect)\nlibrary(XLConnectJars)\nlibrary(readxl)\n\n###################################\n##Example\ndf <- read_excel(\"dataCopy.xlsx\")\ndtm <- strptime(c(\"Mon Mar 28 13:02.00 2016\"), format = \"%a %b %d %M:%OS %Y\",  tz = \"CET\")\ndtm1 <- strptime(c(\"Mon Mar 28 23:55.04 2016\"), format = \"%a %b %d %M:%OS %Y\",  tz = \"CET\")\ndifftime(dtm1[1], dtm[1])\n######################################################################################\n##Assigning to Variables\nfirstSeen <- df[1:292,c('First Seen')]\nlastSeen <- df[1:292,c('Last Seen')]\nfirstSeenData <- strptime(firstSeen, format = \" %a %b %d %M:%OS %Y\",  tz = \"CET\")\nlastSeenData <- strptime(lastSeen, format = \" %a %b %d %M:%OS %Y\",  tz = \"CET\")\ndf[1:292, \"Time Difference\"] <- timeDifference <- difftime(lastSeenData, firstSeenData, units = \"mins\")\n########################################################\n## functions to find the mean of vehicle and pedestrian\nfindingMeanVehicle <- function(x)\n{\n  temp <- matrix(NA, 292, 1)\n  i <- 1 #pointer to temp table\n  j <- 1 #pointer to x, datafile\n  while( j <= 292 )\n  {\n    if( x[j, \"Company\"] == \"Unknown\" ) ## calculating mean for vehicle\n    {\n      if( x[j, \"Time Difference\"] != 0 )\n      {\n        temp[i, 1] <- x[j, \"Time Difference\"]\n        i <- i + 1\n        j <- j + 1\n      }\n      else\n      {\n        j <- j + 1\n      }\n    }\n    else\n    {\n      j <- j + 1\n    }\n  }\n  return (colMeans(temp, na.rm = TRUE))\n} \nmeanVehicle <- findingMeanVehicle(df)\n#######\nfindingMeanPedestrian <- function(x)\n{\n  temp <- matrix(NA, 292, 1)\n  i <- 1 #pointer to temp table\n  j <- 1 #pointer to x, datafile\n  while( j <= 292 )\n  {\n    if( x[j, \"Company\"] != \"Unknown\" ) ## calculating mean for vehicle\n    {\n      if( x[j, \"Time Difference\"] != 0 )\n      {\n        temp[i, 1] <- x[j, \"Time Difference\"]\n        i <- i + 1\n        j <- j + 1\n      }\n      else\n      {\n        j <- j + 1\n      }\n    }\n    else\n    {\n      j <- j + 1\n    }\n  }\n  return (colMeans(temp, na.rm = TRUE))\n}\nmeanPedestrian <- findingMeanPedestrian(df)\n###########################################################################\nlibrary(Hmisc)\nlibrary(car)\nlibrary(plyr)\n##Category Identifying \ndf[\"Category\"] <- NA\n\ncategory <- function(x, y, z)\n{\n  updatedY = y + 2 # for fair\n  updatedZ = z + 2\n  updatedYY = y + 4 # for congestion\n  updatedZZ = z + 4\n  for(i in 1:292)\n  {\n    if(x[i,\"Company\"] == \"Unknown\")\n    {\n      if( (x[i,\"Time Difference\"] <= updatedY) && (x[i,\"Time Difference\"] > 0) ) #when cars are <= average\n      {\n        x[i,\"Category\"] <- \"Good\"\n      }\n      else if ( (x[i, \"Time Difference\"] >= updatedYY) )                 #when cars are >= average + 2secs\n      {\n        x[i, \"Category\"] <- \"Congested\"\n      }\n      else                                                            #when cars are between avg and avg+2\n      {\n        x[i, \"Category\"] <- \"Fair\"\n      }\n    }\n    else\n    {\n      if( (x[i,\"Time Difference\"] <= updatedZ) && (x[i,\"Time Difference\"] > 0) ) #when pedestrians are less than average\n      {\n        x[i,\"Category\"] <- \"Good\"\n      }\n      else if ( (x[i, \"Time Difference\"] >= updatedZZ))                   #when pedestrians are greater than average\n      {\n        x[i, \"Category\"] <- \"Congested\"\n      }\n      else\n      {\n        x[i, \"Category\"] <- \"Fair\"\n      }\n    }\n  }\n  return (x[1:292,\"Category\"])\n}\ndf[1:292, \"Category\"] <- category(df, meanVehicle, meanPedestrian)\n#############################################################################################\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "created" : 1465492024757.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1879230359",
+    "id" : "8C540E80",
+    "lastKnownWriteTime" : 1465565109,
+    "last_content_update" : 1465565109104,
+    "path" : "C:/Users/NTC/Google Drive/6. Research/Railway Safety/Wifi/KNN.R",
+    "project_path" : "KNN.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
