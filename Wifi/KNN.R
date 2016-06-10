@@ -12,8 +12,8 @@ difftime(dtm1[1], dtm[1])
 ##Assigning to Variables
 firstSeen <- df[1:292,c('First Seen')]
 lastSeen <- df[1:292,c('Last Seen')]
-firstSeenData <- strptime(firstSeen, format = " %a %b %d %M:%OS %Y",  tz = "CET")
-lastSeenData <- strptime(lastSeen, format = " %a %b %d %M:%OS %Y",  tz = "CET")
+firstSeenData <- strptime(firstSeen, format = " %a %b %d %H:%M:%S %Y",  tz = "CET")
+lastSeenData <- strptime(lastSeen, format = " %a %b %d %H:%M:%S %Y",  tz = "CET")
 df[1:292, "Time Difference"] <- timeDifference <- difftime(lastSeenData, firstSeenData, units = "mins")
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
