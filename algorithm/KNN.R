@@ -1,6 +1,6 @@
-library(XLConnect)
-library(XLConnectJars)
 library(readxl)
+
+df1 <- read_excel("ParsedData1.xlsx")
 
 ###################################
 ##Example
