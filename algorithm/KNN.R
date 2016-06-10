@@ -1,20 +1,40 @@
 library(readxl)
+library(csvread)
 
-df1 <- read_excel("ParsedData1.xlsx")
-
+x <- read_excel("ParsedData.xlsx")
 ###################################
 ##Example
-df <- read_excel("dataCopy.xlsx")
+df1 <- read_excel("dataCopy.xlsx")
 dtm <- strptime(c("Mon Mar 28 13:02.00 2016"), format = "%a %b %d %M:%OS %Y",  tz = "CET")
 dtm1 <- strptime(c("Mon Mar 28 23:55.04 2016"), format = "%a %b %d %M:%OS %Y",  tz = "CET")
 difftime(dtm1[1], dtm[1])
 ######################################################################################
-##Assigning to Variables
-firstSeen <- df[1:292,c('First Seen')]
-lastSeen <- df[1:292,c('Last Seen')]
-firstSeenData <- strptime(firstSeen, format = " %a %b %d %H:%M:%S %Y",  tz = "CET")
-lastSeenData <- strptime(lastSeen, format = " %a %b %d %H:%M:%S %Y",  tz = "CET")
-df[1:292, "Time Difference"] <- timeDifference <- difftime(lastSeenData, firstSeenData, units = "mins")
+##Assigning to Variables #COMPLETE
+findingTimeDifference <- function(x)
+{
+  options(scipen = 999) #remove scientific notation
+  x["Time Difference"] <- NA
+  firstSeen <- x[1:nrow(x),c('First Seen')]
+  lastSeen <- x[1:nrow(x),c('Last Seen')]
+  firstSeenData <- strptime(firstSeen, format = "%a %b %d %H:%M:%S %Y",  tz = "CET")
+  lastSeenData <- strptime(lastSeen, format = "%a %b %d %H:%M:%S %Y",  tz = "CET")
+  td <- difftime(lastSeenData, firstSeenData, units = "mins")
+  td <- round(td, digits=3)
+  x[1:nrow(x), "Time Difference"] <- td
+  
+  i <- 1
+  while (i <= nrow(x))
+  {
+    if(x[i, "Time Difference"] == 0)
+    {
+      x[i, "Time Difference"] <- NA
+    }
+    i <- i + 1
+  }
+  
+  return (x[1:nrow(x), "Time Difference"])
+}
+df[1:nrow(df), "Time Difference"] <- findingTimeDifference(df)
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
 findingMeanVehicle <- function(x)
