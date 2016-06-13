@@ -22,7 +22,7 @@ findingTimeDifference <- function(x)
   i = 1
   while ( i <= nrow(x))
   {
-    if(x[i,"Time Difference"] < 3.000)
+    if((x[i,"Time Difference"] < 3.000) | (x[i,"Time Difference"] > 60.00))
     {
       x[i, "Time Difference"] <- NA
     }
@@ -32,6 +32,10 @@ findingTimeDifference <- function(x)
   return (x[1:nrow(x),"Time Difference"])
 }
 df[1:nrow(df), "Time Difference"] <- findingTimeDifference(df)
+########################################################
+## creating phone list
+phone <- read_excel("phone.xlsx")
+
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
 findingMeanVehicle <- function(x)
