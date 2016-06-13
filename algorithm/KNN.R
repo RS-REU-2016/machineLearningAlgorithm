@@ -3,30 +3,40 @@ library(XLConnectJars)
 library(readxl)
 
 ###################################
-##Example
+##Initialize
 df <- read_excel("ParsedData.xlsx")
-dtm <- strptime(c("Mon Mar 28 13:02.00 2016"), format = "%a %b %d %M:%OS %Y",  tz = "CET")
-dtm1 <- strptime(c("Mon Mar 28 23:55.04 2016"), format = "%a %b %d %M:%OS %Y",  tz = "CET")
-difftime(dtm1[1], dtm[1])
 ######################################################################################
 ##Assigning to Variables
-initializeVariables <- function(x)
+findingTimeDifference <- function(x)
 {
-  options(scipen = 999)
-  firstSeen <- df[1:nrow(df),c('First Seen')]
-  lastSeen <- df[1:nrow(df),c('Last Seen')]
+  options(scipen = 999) #remove scientific notation
+  x["Time Difference"] <- NA
+  firstSeen <- x[1:nrow(x),c('First Seen')]
+  lastSeen <- x[1:nrow(x),c('Last Seen')]
   firstSeenData <- strptime(firstSeen, format = "%c",  tz = "CET")
   lastSeenData <- strptime(lastSeen, format = "%c",  tz = "CET")
   timeDifference <- difftime(lastSeenData, firstSeenData, units = "mins")
   timeDifference <- round(timeDifference, digits = 3)
-  df[1:nrow(df), "Time Difference"] <- timeDifference
+  x[1:nrow(x), "Time Difference"] <- timeDifference
+  
+  i = 1
+  while ( i <= nrow(x))
+  {
+    if(x[i,"Time Difference"] < 3.000)
+    {
+      x[i, "Time Difference"] <- NA
+    }
+    i <- i + 1
+  }
+  
+  return (x[1:nrow(x),"Time Difference"])
 }
-df[1:nrow(df), "Time Difference"] <- initializeVariables(df)
+df[1:nrow(df), "Time Difference"] <- findingTimeDifference(df)
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
 findingMeanVehicle <- function(x)
 {
-  temp <- matrix(NA, 292, 1)
+  temp <- matrix(NA, nrow(x), 1)
   i <- 1 #pointer to temp table
   j <- 1 #pointer to x, datafile
   while( j <= 292 )
