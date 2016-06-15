@@ -19,22 +19,22 @@ findingTimeDifference <- function(x)
   timeDifference <- round(timeDifference, digits = 3)
   x[1:nrow(x), "Time Difference"] <- timeDifference
   
-#  i = 1
-#  while ( i <= nrow(x))
-#  {
-#    if((x[i,"Time Difference"] < 1.000) | (x[i,"Time Difference"] > 30.00))
-#    {
-#      x[i, "Time Difference"] <- NA
-#    }
-#    i <- i + 1
-#  }
+  i = 1
+  while ( i <= nrow(x))
+  {
+    if((x[i,"Time Difference"] < 2.000) | (x[i,"Time Difference"] > 25.00))
+    {
+      x[i, "Time Difference"] <- NA
+    }
+      i <- i + 1
+  }
   
   return (x[1:nrow(x),"Time Difference"])
 }
 df[1:nrow(df), "Time Difference"] <- findingTimeDifference(df)
 ########################################################
 ## creating phone list
-phone <- read_excel("phone.xlsx")
+#phone <- read_excel("phone.xlsx")
 ########################################################
 ##categorizing as vehicle or pedestrian
 findingVP <- function(x)
@@ -62,11 +62,6 @@ findingVP <- function(x)
   return (x[1:nrow(x), "V or P"])
 }
 df[1:nrow(df), "V or P"] <- findingVP(df)
-
-
-
-
-
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
 findingMeanVehicle <- function(x)
@@ -76,21 +71,14 @@ findingMeanVehicle <- function(x)
   j <- 1 #pointer to x, datafile
   while( j <= nrow(x) )
   {
-    if( x[j, "Company"] == "Unknown" ) ## calculating mean for vehicle
+    if( is.na(x[j, "V or P"]) | x[j, "V or P"] == "Pedestrian")
     {
-      if( x[j, "Time Difference"] != 0 )
-      {
-        temp[i, 1] <- x[j, "Time Difference"]
-        i <- i + 1
-        j <- j + 1
-      }
-      else
-      {
-        j <- j + 1
-      }
+      j <- j + 1  
     }
     else
     {
+      temp[i, 1] <- x[j, "Time Difference"]
+      i <- i + 1
       j <- j + 1
     }
   }
@@ -100,26 +88,19 @@ meanVehicle <- findingMeanVehicle(df)
 #######
 findingMeanPedestrian <- function(x)
 {
-  temp <- matrix(NA, 292, 1)
+  temp <- matrix(NA, nrow(x), 1)
   i <- 1 #pointer to temp table
   j <- 1 #pointer to x, datafile
-  while( j <= 292 )
+  while( j <= nrow(x) )
   {
-    if( x[j, "Company"] != "Unknown" ) ## calculating mean for vehicle
+    if( is.na(x[j, "V or P"]) | x[j, "V or P"] == "Vehicle")
     {
-      if( x[j, "Time Difference"] != 0 )
-      {
-        temp[i, 1] <- x[j, "Time Difference"]
-        i <- i + 1
-        j <- j + 1
-      }
-      else
-      {
-        j <- j + 1
-      }
+      j <- j + 1  
     }
     else
     {
+      temp[i, 1] <- x[j, "Time Difference"]
+      i <- i + 1
       j <- j + 1
     }
   }
