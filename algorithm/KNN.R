@@ -85,6 +85,7 @@ findingMeanVehicle <- function(x)
   return (colMeans(temp, na.rm = TRUE))
 } 
 meanVehicle <- findingMeanVehicle(df)
+meanVehicle <- round(meanVehicle, digits = 3)
 #######
 findingMeanPedestrian <- function(x)
 {
@@ -107,34 +108,43 @@ findingMeanPedestrian <- function(x)
   return (colMeans(temp, na.rm = TRUE))
 }
 meanPedestrian <- findingMeanPedestrian(df)
+meanPedestrian <- round(meanPedestrian, digits = 3)
 ###########################################################################
 library(Hmisc)
 library(car)
 library(plyr)
 ##Category Identifying 
-df["Category"] <- NA
-
-category <- function(x, y, z)
+findingCategory <- function(x, y, z)
 {
+  x["Category"] <- NA
   updatedY = y + 2 # for fair
   updatedZ = z + 2
   updatedYY = y + 4 # for congestion
   updatedZZ = z + 4
-  for(i in 1:nrow(x))
+  
+  i <- 1
+  while (i < nrow(x))
   {
-    if(x[i,"Company"] == "Unknown")
+    if(is.na(x[i, "V or P"]))
+    {
+      i <- i + 1
+    }
+    else if (x[i, "V or P"] == "Vehicle")
     {
       if( (x[i,"Time Difference"] <= updatedY) && (x[i,"Time Difference"] > 0) ) #when cars are <= average
       {
         x[i,"Category"] <- "Good"
+        i <- i + 1
       }
       else if ( (x[i, "Time Difference"] >= updatedYY) )                 #when cars are >= average + 2secs
       {
         x[i, "Category"] <- "Congested"
+        i <- i + 1
       }
       else                                                            #when cars are between avg and avg+2
       {
         x[i, "Category"] <- "Fair"
+        i <- i + 1
       }
     }
     else
@@ -142,20 +152,23 @@ category <- function(x, y, z)
       if( (x[i,"Time Difference"] <= updatedZ) && (x[i,"Time Difference"] > 0) ) #when pedestrians are less than average
       {
         x[i,"Category"] <- "Good"
+        i <- i + 1
       }
       else if ( (x[i, "Time Difference"] >= updatedZZ))                   #when pedestrians are greater than average
       {
         x[i, "Category"] <- "Congested"
+        i <- i + 1
       }
       else
       {
         x[i, "Category"] <- "Fair"
+        i <- i + 1
       }
     }
   }
-  return (x[1:292,"Category"])
+  return (x[1:nrow(x),"Category"])
 }
-df[1:nrow(df), "Category"] <- category(df, meanVehicle, meanPedestrian)
+df[1:nrow(df), "Category"] <- findingCategory(df, meanVehicle, meanPedestrian)
 #############################################################################################
 
 
