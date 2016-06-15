@@ -19,15 +19,15 @@ findingTimeDifference <- function(x)
   timeDifference <- round(timeDifference, digits = 3)
   x[1:nrow(x), "Time Difference"] <- timeDifference
   
-  i = 1
-  while ( i <= nrow(x))
-  {
-    if((x[i,"Time Difference"] < 3.000) | (x[i,"Time Difference"] > 60.00))
-    {
-      x[i, "Time Difference"] <- NA
-    }
-    i <- i + 1
-  }
+#  i = 1
+#  while ( i <= nrow(x))
+#  {
+#    if((x[i,"Time Difference"] < 1.000) | (x[i,"Time Difference"] > 30.00))
+#    {
+#      x[i, "Time Difference"] <- NA
+#    }
+#    i <- i + 1
+#  }
   
   return (x[1:nrow(x),"Time Difference"])
 }
@@ -35,6 +35,37 @@ df[1:nrow(df), "Time Difference"] <- findingTimeDifference(df)
 ########################################################
 ## creating phone list
 phone <- read_excel("phone.xlsx")
+########################################################
+##categorizing as vehicle or pedestrian
+findingVP <- function(x)
+{
+  x["V or P"] <- NA
+  i <- 1
+  while (i < nrow(x))
+  {
+    if((x[i, "Time Difference"] >= 2.000)  & x[i,"Time Difference"] < 15.000) # greater than 3 min to 25 min, pedestrian
+    {
+      x[i, "V or P"] <- "Vehicle"
+      i <- i + 1
+    }
+    else if (x[i, "Time Difference"] >= 15.000 & x[i, "Time Difference"] <= 25.000)
+    {
+      x[i, "V or P"] <- "Pedestrian"
+      i <- i + 1
+    }
+    else
+    {
+      x[i, "V or P"] <- NA
+      i <- i + 1
+    }
+  }
+  return (x[1:nrow(x), "V or P"])
+}
+df[1:nrow(df), "V or P"] <- findingVP(df)
+
+
+
+
 
 ########################################################
 ## functions to find the mean of vehicle and pedestrian
@@ -43,7 +74,7 @@ findingMeanVehicle <- function(x)
   temp <- matrix(NA, nrow(x), 1)
   i <- 1 #pointer to temp table
   j <- 1 #pointer to x, datafile
-  while( j <= 292 )
+  while( j <= nrow(x) )
   {
     if( x[j, "Company"] == "Unknown" ) ## calculating mean for vehicle
     {
