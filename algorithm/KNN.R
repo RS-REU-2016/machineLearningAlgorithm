@@ -184,13 +184,13 @@ df_n <- as.data.frame(df2[,c(5)])
 str(df_n)
 summary(df_n)
 
-df_train <- df_n[1:300, ]
-df_test <- df_n[301:360, ]
+df_train <- df_n[1:300, ,drop = FALSE]
+df_test <- df_n[301:360, , drop = FALSE]
 df_train_target <- df2[1:300, 7]
 df_test_target <- df2[301:360, 7]
 require(class)
 sqrt(360)
-m1 <- knn(train = df_n[1:300, ,drop = FALSE], test = df_n[301:360, ,drop = FALSE], cl = df_train_target, k = 19)
+m1 <- knn(train = df_train, test = df_test, cl = df_train_target, k = 19)
 table(df_test_target, m1)
 
 
