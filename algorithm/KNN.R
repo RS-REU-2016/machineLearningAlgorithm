@@ -24,7 +24,7 @@ findingTimeDifference <- function(x)
   {
     if((x[i,"Time Difference"] < 2.000) | (x[i,"Time Difference"] > 25.00))
     {
-      x[i, "Time Difference"] <- NA
+      x[i, "Time Difference"] <- -1
     }
       i <- i + 1
   }
@@ -41,7 +41,7 @@ findingVP <- function(x)
 {
   x["V or P"] <- NA
   i <- 1
-  while (i < nrow(x))
+  while (i <= nrow(x))
   {
     if((x[i, "Time Difference"] >= 2.000)  & x[i,"Time Difference"] < 15.000) # greater than 3 min to 25 min, pedestrian
     {
@@ -55,7 +55,7 @@ findingVP <- function(x)
     }
     else
     {
-      x[i, "V or P"] <- NA
+      x[i, "V or P"] <- "Other"
       i <- i + 1
     }
   }
@@ -110,9 +110,9 @@ findingMeanPedestrian <- function(x)
 meanPedestrian <- findingMeanPedestrian(df)
 meanPedestrian <- round(meanPedestrian, digits = 3)
 ###########################################################################
-library(Hmisc)
-library(car)
-library(plyr)
+#library(Hmisc)
+#library(car)
+#library(plyr)
 ##Category Identifying 
 findingCategory <- function(x, y, z)
 {
@@ -123,10 +123,11 @@ findingCategory <- function(x, y, z)
   updatedZZ = z + 4
   
   i <- 1
-  while (i < nrow(x))
+  while (i <= nrow(x))
   {
-    if(is.na(x[i, "V or P"]))
+    if((x[i, "V or P"]) == "Other")
     {
+      x[i, "Category"] <- "Other"
       i <- i + 1
     }
     else if (x[i, "V or P"] == "Vehicle")
@@ -170,20 +171,27 @@ findingCategory <- function(x, y, z)
 }
 df[1:nrow(df), "Category"] <- findingCategory(df, meanVehicle, meanPedestrian)
 #############################################################################################
+## KNN
+table(df$Category)
+head(df)
+set.seed(9850)
+gp <- runif(nrow(df))
+df2 <- df[order(gp), ]
+head(df2)
 
+summary(df2[,c(5)])
+df_n <- as.data.frame(df2[,c(5)])
+str(df_n)
+summary(df_n)
 
-
-
-
-
-
-
-
-
-
-
-
-
+df_train <- df_n[1:300, ]
+df_test <- df_n[301:360, ]
+df_train_target <- df2[1:300, 7]
+df_test_target <- df2[301:360, 7]
+require(class)
+sqrt(360)
+m1 <- knn(train = df_n[1:300, ,drop = FALSE], test = df_n[301:360, ,drop = FALSE], cl = df_train_target, k = 19)
+table(df_test_target, m1)
 
 
 

@@ -1,0 +1,28 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1466106815941.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FECA37E",
+    "lastKnownWriteTime" : 7308604914264011873,
+    "last_content_update" : 1466106815941,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "leutchaxpf",
+        "caption" : "df",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=df&cache_key=leutchaxpf",
+        "displayedObservations" : 360,
+        "environment" : "",
+        "object" : "df",
+        "totalObservations" : 360,
+        "variables" : 7
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

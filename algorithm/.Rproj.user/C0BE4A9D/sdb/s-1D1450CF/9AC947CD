@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "data(iris)\nstr(iris)\ntable(iris$Species)\nhead(iris)\n\nset.seed(9850)\nrunif(5)\ngp <-runif(nrow(iris))\niris <- iris[order(gp), ]\nhead(iris)\n\nsummary(iris[,c(1,2,3,4)])\nnormalize <- function(x){return( (x- min(x)) / (max(x) - min(x)) )}\nnormalize(c(1,2,3,4,5))\nnormalize(c(10,20,30,40,50))\niris_n <- as.data.frame(lapply(iris[,c(1,2,3,4)], normalize))\nstr(iris_n)\nsummary(iris_n)\n###\niris_train <- iris_n[1:129, ]\niris_test <- iris_n[130:150, ] \niris_train_target <- iris[1:129, 5]\niris_test_target <- iris[130:150, 5]\nrequire(class)\nk = 13 #sqrt(150)\nm1  <- knn(train = iris_train, test = iris_test, cl = iris_train_target, k = 13)\nm1\ntable(iris_test_target, m1)\n",
+    "created" : 1466085241983.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "625884952",
+    "id" : "9AC947CD",
+    "lastKnownWriteTime" : 2475907986941686330,
+    "last_content_update" : 1466086752170,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
